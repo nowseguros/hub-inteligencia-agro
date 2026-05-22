@@ -1,5 +1,5 @@
 // hooks/useUsers.ts
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { instance } from "@/api/instance";
 
 type User = {

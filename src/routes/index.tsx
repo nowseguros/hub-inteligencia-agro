@@ -1,22 +1,26 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "@tanstack/react-router";
+import { AppNavbar } from "@/components/customs/app-navbar";
+import { LocationsCard } from "@/components/customs/locations-card";
+import { RecentAnalysesTable } from "@/components/customs/recent-analyses-table";
+import { Sidebar } from "@/components/customs/sidebar";
+import { WeatherCard } from "@/components/customs/weather-card";
 
-export const Route = createFileRoute("/")({ component: App });
+export const Route = createFileRoute("/")({ component: HomePage });
 
-function App() {
-	const navigate = useNavigate();
-
-
+function HomePage() {
 	return (
-		<div className="flex min-h-svh p-6">
-			<div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-				<div>
-					<h1 className="font-medium">Project ready!</h1>
-					<p>You may now add components and start building.</p>
-					<p>We&apos;ve already added the button component for you.</p>
-					<Button onClick={() => navigate({ to: '/user' })} className="mt-2">Button</Button>
+		<div className="flex min-h-screen gap-4 bg-white p-4">
+			<Sidebar />
+
+			<div className="flex flex-1 flex-col gap-4 overflow-hidden">
+				<AppNavbar />
+
+				<div className="grid grid-cols-2 gap-4">
+					<LocationsCard />
+					<WeatherCard />
 				</div>
+
+				<RecentAnalysesTable />
 			</div>
 		</div>
 	);

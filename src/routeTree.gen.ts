@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UserIndexRouteImport } from './routes/user/index'
+import { Route as NovaAnaliseIndexRouteImport } from './routes/nova-analise/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +23,39 @@ const UserIndexRoute = UserIndexRouteImport.update({
   path: '/user/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NovaAnaliseIndexRoute = NovaAnaliseIndexRouteImport.update({
+  id: '/nova-analise/',
+  path: '/nova-analise/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/nova-analise/': typeof NovaAnaliseIndexRoute
   '/user/': typeof UserIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/nova-analise': typeof NovaAnaliseIndexRoute
   '/user': typeof UserIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/nova-analise/': typeof NovaAnaliseIndexRoute
   '/user/': typeof UserIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/user/'
+  fullPaths: '/' | '/nova-analise/' | '/user/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/user'
-  id: '__root__' | '/' | '/user/'
+  to: '/' | '/nova-analise' | '/user'
+  id: '__root__' | '/' | '/nova-analise/' | '/user/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  NovaAnaliseIndexRoute: typeof NovaAnaliseIndexRoute
   UserIndexRoute: typeof UserIndexRoute
 }
 
@@ -65,11 +75,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/nova-analise/': {
+      id: '/nova-analise/'
+      path: '/nova-analise'
+      fullPath: '/nova-analise/'
+      preLoaderRoute: typeof NovaAnaliseIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  NovaAnaliseIndexRoute: NovaAnaliseIndexRoute,
   UserIndexRoute: UserIndexRoute,
 }
 export const routeTree = rootRouteImport

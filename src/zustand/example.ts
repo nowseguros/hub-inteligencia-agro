@@ -7,7 +7,7 @@ type BearStore = {
 	updateBears: (newBears: number) => void;
 };
 
-const useBear = create<BearStore>((set) => ({
+export const useBear = create<BearStore>((set) => ({
 	bears: 0,
 	increasePopulation: () => set((state) => ({ bears: state.bears + 1 })),
 	removeAllBears: () => set({ bears: 0 }),

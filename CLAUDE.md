@@ -6,7 +6,7 @@ Guia de referência para Claude Code neste projeto.
 
 ## Comandos Essenciais
 
-```bash
+```bashv
 npm run dev          # Dev server em http://localhost:1234
 npm run build        # Build de produção
 npm run typecheck    # Checagem TypeScript sem emitir arquivos
