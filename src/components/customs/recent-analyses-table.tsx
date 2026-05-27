@@ -17,6 +17,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import {
 	Table,
 	TableBody,
 	TableCell,
@@ -85,8 +92,7 @@ const MOCK_DATA: Analysis[] = [
 	},
 ];
 
-const PAGE_SIZE = 5;
-const TOTAL_PAGES = 5;
+const PAGE_SIZE_OPTIONS = [3, 5, 10, 15];
 
 interface RecentAnalysesTableProps {
 	data?: Analysis[];
@@ -97,6 +103,7 @@ export function RecentAnalysesTable({
 }: RecentAnalysesTableProps) {
 	const [search, setSearch] = useState("");
 	const [currentPage, setCurrentPage] = useState(1);
+	const [pageSize, setPageSize] = useState(5);
 
 	const filtered = data.filter(
 		(row) =>
@@ -104,27 +111,45 @@ export function RecentAnalysesTable({
 			row.cpfCnpj.includes(search),
 	);
 
+	const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+	const paginated = filtered.slice(
+		(currentPage - 1) * pageSize,
+		currentPage * pageSize,
+	);
+
+	function handleSearch(value: string) {
+		setSearch(value);
+		setCurrentPage(1);
+	}
+
+	function handlePageSize(value: string) {
+		setPageSize(Number(value));
+		setCurrentPage(1);
+	}
+
 	return (
 		<div className="flex flex-col gap-4 rounded-[15px] bg-[#fafafa] p-5">
 			<h2 className="text-[15px] font-bold text-[#3a3a3c]">
 				Análises Recentes
 			</h2>
 
-			<div className="relative w-[453px]">
-				<Search
-					size={16}
-					strokeWidth={1.5}
-					className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8a8a8a] opacity-70"
-				/>
-				<Input
-					placeholder="Buscar Nome, CPF ou CNPJ"
-					value={search}
-					onChange={(e) => setSearch(e.target.value)}
-					className="h-[30px] rounded-[15px] border-none bg-[#fafafa] pl-9 text-sm shadow-none ring-1 ring-[#e5e5e5] placeholder:text-[#8a8a8a] focus-visible:ring-[#00ae8d]"
-				/>
-			</div>
-
 			<div className="rounded-[15px] bg-white shadow-[4px_4px_4px_0px_rgba(138,138,138,0.3)]">
+				<div className="px-4 pt-4 pb-3">
+					<div className="relative w-[453px]">
+						<Search
+							size={16}
+							strokeWidth={1.5}
+							className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8a8a8a] opacity-70"
+						/>
+						<Input
+							placeholder="Buscar Nome, CPF ou CNPJ"
+							value={search}
+							onChange={(e) => handleSearch(e.target.value)}
+							className="h-[30px] rounded-[15px] border-none bg-[#fafafa] pl-9 text-sm shadow-none ring-1 ring-[#e5e5e5] placeholder:text-[#8a8a8a] focus-visible:ring-[#00ae8d]"
+						/>
+					</div>
+				</div>
+				<div className="px-4 pb-4">
 				<Table>
 					<TableHeader>
 						<TableRow className="bg-[#f3f2f2] hover:bg-[#f3f2f2]">
@@ -161,7 +186,7 @@ export function RecentAnalysesTable({
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{filtered.slice(0, PAGE_SIZE).map((row) => (
+						{paginated.map((row) => (
 							<TableRow
 								key={row.id}
 								className="border-b border-[#f0f0f0] text-[11px] text-[#3a3a3c]"
@@ -188,7 +213,7 @@ export function RecentAnalysesTable({
 												<MoreHorizontal size={15} strokeWidth={1.5} />
 											</Button>
 										</DropdownMenuTrigger>
-										<DropdownMenuContent align="end" className="w-[149px]">
+										<DropdownMenuContent align="end" className="w-37.25">
 											<DropdownMenuItem className="gap-2 text-[11px] text-[#8a8a8a]">
 												<Download size={13} strokeWidth={1.5} />
 												Baixar Arquivo
@@ -208,40 +233,49 @@ export function RecentAnalysesTable({
 						))}
 					</TableBody>
 				</Table>
+			</div>
+			</div>
 
-				<div className="flex items-center justify-between px-4 py-3">
-					<div className="flex items-center gap-1.5">
-						{Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map(
-							(page) => (
-								<button
-									key={page}
-									type="button"
-									onClick={() => setCurrentPage(page)}
-									className={cn(
-										"flex size-5 items-center justify-center rounded-[5px] text-[11px]",
-										currentPage === page
-											? "bg-[#00ae8d] font-bold text-white"
-											: "border border-[#c6c6c6] text-[#8a8a8a]",
-									)}
-								>
-									{page}
-								</button>
-							),
+			<div className="flex items-center justify-center gap-1.5 py-1">
+				{Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+					<button
+						key={page}
+						type="button"
+						onClick={() => setCurrentPage(page)}
+						className={cn(
+							"flex size-5 items-center justify-center rounded-[5px] text-[11px]",
+							currentPage === page
+								? "bg-[#00ae8d] font-bold text-white"
+								: "border border-[#c6c6c6] text-[#8a8a8a]",
 						)}
-						<button
-							type="button"
-							className="flex size-5 items-center justify-center text-[#8a8a8a]"
-						>
-							<ChevronRight size={12} strokeWidth={2} />
-						</button>
-					</div>
-					<div className="flex items-center gap-2 text-[10px] tracking-wide text-[#3a3a3c]">
-						<span className="flex h-[17px] w-[26px] items-center justify-center rounded border border-[#d0d0d0] text-[10px]">
-							05
-						</span>
-						<span>Linhas por página</span>
-					</div>
-				</div>
+					>
+						{page}
+					</button>
+				))}
+				<button
+					type="button"
+					disabled={currentPage >= totalPages}
+					onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+					className="flex size-5 items-center justify-center text-[#8a8a8a] disabled:opacity-30"
+				>
+					<ChevronRight size={12} strokeWidth={2} />
+				</button>
+			</div>
+
+			<div className="flex items-center justify-end gap-2 text-[10px] tracking-wide text-[#3a3a3c]">
+				<Select value={String(pageSize)} onValueChange={handlePageSize}>
+					<SelectTrigger className="h-6 w-13 rounded border border-[#d0d0d0] px-2 text-[10px] shadow-none">
+						<SelectValue />
+					</SelectTrigger>
+					<SelectContent>
+						{PAGE_SIZE_OPTIONS.map((n) => (
+							<SelectItem key={n} value={String(n)} className="text-[11px]">
+								{String(n).padStart(2, "0")}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+				<span>Linhas por página</span>
 			</div>
 		</div>
 	);
