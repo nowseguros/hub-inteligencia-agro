@@ -9,13 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as UserIndexRouteImport } from './routes/user/index'
-import { Route as NovaAnaliseIndexRouteImport } from './routes/nova-analise/index'
+import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
+import { Route as LayoutNovaAnaliseIndexRouteImport } from './routes/_layout/nova-analise/index'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const LayoutRoute = LayoutRouteImport.update({
+  id: '/_layout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UserIndexRoute = UserIndexRouteImport.update({
@@ -23,49 +23,59 @@ const UserIndexRoute = UserIndexRouteImport.update({
   path: '/user/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const NovaAnaliseIndexRoute = NovaAnaliseIndexRouteImport.update({
+const LayoutIndexRoute = LayoutIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutNovaAnaliseIndexRoute = LayoutNovaAnaliseIndexRouteImport.update({
   id: '/nova-analise/',
   path: '/nova-analise/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => LayoutRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/nova-analise/': typeof NovaAnaliseIndexRoute
+  '/': typeof LayoutIndexRoute
   '/user/': typeof UserIndexRoute
+  '/nova-analise/': typeof LayoutNovaAnaliseIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/nova-analise': typeof NovaAnaliseIndexRoute
+  '/': typeof LayoutIndexRoute
   '/user': typeof UserIndexRoute
+  '/nova-analise': typeof LayoutNovaAnaliseIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/nova-analise/': typeof NovaAnaliseIndexRoute
+  '/_layout': typeof LayoutRouteWithChildren
+  '/_layout/': typeof LayoutIndexRoute
   '/user/': typeof UserIndexRoute
+  '/_layout/nova-analise/': typeof LayoutNovaAnaliseIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/nova-analise/' | '/user/'
+  fullPaths: '/' | '/user/' | '/nova-analise/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/nova-analise' | '/user'
-  id: '__root__' | '/' | '/nova-analise/' | '/user/'
+  to: '/' | '/user' | '/nova-analise'
+  id:
+    | '__root__'
+    | '/_layout'
+    | '/_layout/'
+    | '/user/'
+    | '/_layout/nova-analise/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  NovaAnaliseIndexRoute: typeof NovaAnaliseIndexRoute
+  LayoutRoute: typeof LayoutRouteWithChildren
   UserIndexRoute: typeof UserIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
+    '/_layout': {
+      id: '/_layout'
+      path: ''
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof LayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/user/': {
@@ -75,19 +85,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/nova-analise/': {
-      id: '/nova-analise/'
+    '/_layout/': {
+      id: '/_layout/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof LayoutIndexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/nova-analise/': {
+      id: '/_layout/nova-analise/'
       path: '/nova-analise'
       fullPath: '/nova-analise/'
-      preLoaderRoute: typeof NovaAnaliseIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof LayoutNovaAnaliseIndexRouteImport
+      parentRoute: typeof LayoutRoute
     }
   }
 }
 
+interface LayoutRouteChildren {
+  LayoutIndexRoute: typeof LayoutIndexRoute
+  LayoutNovaAnaliseIndexRoute: typeof LayoutNovaAnaliseIndexRoute
+}
+
+const LayoutRouteChildren: LayoutRouteChildren = {
+  LayoutIndexRoute: LayoutIndexRoute,
+  LayoutNovaAnaliseIndexRoute: LayoutNovaAnaliseIndexRoute,
+}
+
+const LayoutRouteWithChildren =
+  LayoutRoute._addFileChildren(LayoutRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  NovaAnaliseIndexRoute: NovaAnaliseIndexRoute,
+  LayoutRoute: LayoutRouteWithChildren,
   UserIndexRoute: UserIndexRoute,
 }
 export const routeTree = rootRouteImport
