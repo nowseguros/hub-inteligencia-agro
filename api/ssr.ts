@@ -3,8 +3,6 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 // dist/server/server.js é gerado em build time
 const server = await import("../dist/server/server.js");
 
-export const config = { runtime: "nodejs20.x" };
-
 export default async function handler(
 	req: IncomingMessage,
 	res: ServerResponse,

@@ -2,10 +2,9 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist/client",
   "framework": null,
+  "nodeVersion": "20.x",
   "functions": {
-    "api/ssr.ts": {
-      "runtime": "nodejs20.x"
-    }
+    "api/ssr.ts": {}
   },
   "rewrites": [
     { "source": "/(.*)", "destination": "/api/ssr" }
